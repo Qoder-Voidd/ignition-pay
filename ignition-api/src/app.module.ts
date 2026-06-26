@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { LoggingInterceptor } from './common/logging/logging.interceptor';
 import { PrismaModule } from './prisma/prisma.module';
 import { QueueModule } from './queue/queue.module';
 import { RedisModule } from './redis/redis.module';
@@ -15,6 +17,8 @@ import { UsersModule } from './users/users.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { SessionModule } from './session/session.module';
+import { AddressesModule } from './addresses/addresses.module';
 
 @Module({
   imports: [
@@ -25,6 +29,7 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
     QueueModule,
     RedisModule,
     HealthModule,
+    SessionModule,
     AuthModule,
     AppThrottlerModule,
     ApiKeysModule,
@@ -32,6 +37,7 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
     UsersModule,
     WalletsModule,
     TransactionsModule,
+    AddressesModule,
   ],
   controllers: [AppController],
   providers: [
@@ -39,6 +45,8 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
     },
   ],
 })
