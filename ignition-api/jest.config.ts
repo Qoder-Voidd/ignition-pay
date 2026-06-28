@@ -5,10 +5,14 @@ export default {
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
-  collectCoverageFrom: ['**/*.(t|j)s', '!main.ts', '!**/*.module.ts'],
+  collectCoverageFrom: [
+    '**/*.(t|j)s', 
+    '!main.ts', 
+    '!**/*.module.ts',
+    '!**/*.entity.ts'
+  ],
   coverageDirectory: '../coverage',
   coverageReporters: ['text', 'lcov'],
-  // Establish strict failure gates for missing coverage
   coverageThreshold: {
     global: {
       statements: 80,

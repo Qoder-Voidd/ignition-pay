@@ -36,17 +36,13 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Setup Rust & Tarpaulin Compiler (for Soroban Contracts)
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          components: llvm-tools-preview
+      - name: Setup Rust & Tarpaulin Toolchain
+        uses: dtolnay/rust-toolchain@stable
 
-      - name: Install cargo-tarpaulin Utility
+      - name: Install cargo-tarpaulin Dependency
         run: cargo install cargo-tarpaulin
 
-      - name: Install Application Project Dependencies
+      - name: Install Monorepo Project Dependencies
         run: npm ci
 
       # 1. Execute Backend Unit Matrix with Coverage
@@ -66,11 +62,14 @@ jobs:
           cargo tarpaulin --out Lcov --output-dir ./coverage
 
       # 4. Consolidate and Forward LCOV Files directly to Codecov
-      - name: Dispatch Diagnostics Reports to Codecov
+      - name: Dispatch Diagnostic Reports to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./apps/api/coverage/lcov.info,./apps/web/coverage/lcov.info,./contracts/coverage/lcov.info
+          files: |
+            ./apps/api/coverage/lcov.info
+            ./apps/web/coverage/lcov.info
+            ./contracts/coverage/lcov.info
           flags: unittests,smart-contracts
           name: web3-student-lab-coverage
           fail_ci_if_error: true
